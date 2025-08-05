@@ -17,15 +17,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from assignment.views import initialize_data, UserViewSet
+from assignment.views import initialize_data, UserViewSet, create_learning_record
 from rest_framework.routers import DefaultRouter
 
 
 router = DefaultRouter()
-router.register(r"user", UserViewSet, basename="user")
+router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
+    path("records/", create_learning_record, name="create_learning_record"),
     path("init_data/", initialize_data, name="initialize_data"),
 ]
