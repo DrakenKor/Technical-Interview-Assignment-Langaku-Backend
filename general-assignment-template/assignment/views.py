@@ -99,7 +99,7 @@ class UserViewSet(viewsets.ViewSet):
 
         if from_time >= to:
             return Response(
-                {"error": "from_time must be before to_time"},
+                {"error": "from_time timestamp must be before to timestamp"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

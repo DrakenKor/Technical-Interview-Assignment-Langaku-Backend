@@ -36,6 +36,8 @@ A Django REST API that aggregates learning logs and returns summaries with movin
 The docker environment runs two containers:
   * db: postgres 16 on port 5432
   * web: the Django API server on port 8000
+From the general-assignment-template directory:
+
 ```bash
 docker compose up -d
 ```
@@ -43,6 +45,7 @@ docker compose up -d
 The API will be available at `http://localhost:8000`
 
 ### Run tests
+From the general-assignment-template directory:
 
 ```bash
 docker compose exec web uv run poe test
@@ -98,7 +101,15 @@ ORDER BY period
 - **Efficiency**: Single query aggregates all data for the time range
 - **Flexibility**: PostgreSQL's DATE_TRUNC supports hour/day/month granularities natively
 - **Scalability**: Leverages database indexes for optimal performance
-
+We apply the following indices/constraints:
+```
+        unique_together = ["user", "timestamp"]
+        indexes = [
+            models.Index(fields=["user", "timestamp"]),
+            models.Index(fields=["timestamp"]),
+        ]
+        ordering = ["-timestamp"]
+```
 ### Moving Average Calculation
 
 **Simple Moving Average (SMA) Formula:**
@@ -255,16 +266,9 @@ def calculate_adaptive_window(user_data, base_window=7):
 - **Precision**: Database-level date/time calculations
 - **Scalability**: Leverages PostgreSQL query optimization
 
-### Why Simple Moving Average?
-
-- **Simplicity**: Easy to understand and implement
-- **Interpretability**: Clear meaning for users
-- **Performance**: Efficient calculation
-- **Standard**: Widely used in analytics
-
 ## Testing
 
-The project includes comprehensive tests covering:
+The project includes tests for the learning logs API:
 
 - **API Endpoints**: All success and error scenarios
 - **Idempotence**: Duplicate submission handling
@@ -275,5 +279,5 @@ The project includes comprehensive tests covering:
 Run tests with detailed coverage:
 
 ```bash
-uv run poe test --verbose --cov=assignment
+docker exec web uv run poe test
 ```

@@ -100,7 +100,7 @@ GET /api/v1/users/1/summary/?from=2024-01-01T00:00:00Z&to=2024-01-31T23:59:59Z&g
 ```json
 {
   "user_id": 1,
-  "from": "2024-01-01T00:00:00Z",
+  "from_time": "2024-01-01T00:00:00Z",
   "to": "2024-01-31T23:59:59Z",
   "granularity": "day",
   "moving_average_window": 7,
@@ -142,7 +142,7 @@ GET /api/v1/users/1/summary/?from=2024-01-01T00:00:00Z&to=2024-01-31T23:59:59Z&g
 *Invalid Parameters (400)*
 ```json
 {
-  "from": ["This field is required"],
+  "from_time": ["This field is required"],
   "granularity": ["\"invalid\" is not a valid choice."]
 }
 ```
@@ -150,7 +150,7 @@ GET /api/v1/users/1/summary/?from=2024-01-01T00:00:00Z&to=2024-01-31T23:59:59Z&g
 *Invalid Time Range (400)*
 ```json
 {
-  "error": "from_time must be before to_time"
+  "error": "from_time timestamp must be before to timestamp"
 }
 ```
 
@@ -187,7 +187,7 @@ Returns information about the currently authenticated user.
 Data is aggregated using PostgreSQL's `DATE_TRUNC` function to group records into time buckets:
 
 - **Hour**: Groups by hour (e.g., 2024-01-15 10:00:00)
-- **Day**: Groups by day (e.g., 2024-01-15 00:00:00)  
+- **Day**: Groups by day (e.g., 2024-01-15 00:00:00)
 - **Month**: Groups by month (e.g., 2024-01-01 00:00:00)
 
 ### Aggregation Formula
@@ -213,7 +213,7 @@ Where:
 
 **Example**: For window size 3 and values [100, 200, 300, 400]:
 - Period 1: SMA = null (< 3 values)
-- Period 2: SMA = null (< 3 values)  
+- Period 2: SMA = null (< 3 values)
 - Period 3: SMA = (100 + 200 + 300) / 3 = 200
 - Period 4: SMA = (200 + 300 + 400) / 3 = 300
 
@@ -229,7 +229,7 @@ The system includes optimized database indexes for performance:
 -- Composite index for user + timestamp queries
 CREATE INDEX assignment_learninglog_user_timestamp_idx ON assignment_learninglog (user_id, timestamp);
 
--- Single timestamp index for time-range queries  
+-- Single timestamp index for time-range queries
 CREATE INDEX assignment_learninglog_timestamp_idx ON assignment_learninglog (timestamp);
 ```
 

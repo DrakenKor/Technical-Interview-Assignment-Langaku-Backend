@@ -236,20 +236,20 @@ class TestLearningLogAPI(APITestCase):
         response2 = self.client.post("/records/", data, format="json")
         self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
 
-
         record_count = LearningLog.objects.filter(user=self.user).count()
         print(f"Record count after duplicate submission: {record_count}")
 
-
         try:
-            self.assertEqual(record_count, 1, "Idempotence violated: should have only 1 record")
+            self.assertEqual(
+                record_count, 1, "Idempotence violated: should have only 1 record"
+            )
             print("Idempotence working correctly")
         except AssertionError as e:
             print(f"Idempotence BROKEN: {e}")
 
-            logs = LearningLog.objects.filter(user=self.user).order_by('timestamp')
+            logs = LearningLog.objects.filter(user=self.user).order_by("timestamp")
             for i, log in enumerate(logs):
-                print(f"Record {i+1}: timestamp = {log.timestamp}")
+                print(f"Record {i + 1}: timestamp = {log.timestamp}")
 
     def test_unauthenticated_access(self):
         """Test that unauthenticated users cannot access endpoints"""
